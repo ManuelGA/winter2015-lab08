@@ -31,7 +31,7 @@ class Application extends CI_Controller {
      * Render this page
      */
     function render() {
-        $this->data['menubar'] = $this->parser->parse('_menubar', $this->config->item('menu_choices'),true);
+        $this->data['menubar'] = $this->parser->parse('_menubar', $this->showMenu(),true);
         $this->data['content'] = $this->parser->parse($this->data['pagebody'], $this->data, true);
         $this->data['sessionid'] = session_id();
         // finally, build the browser page!
@@ -53,6 +53,45 @@ class Application extends CI_Controller {
             return;
           }
          }
+    }
+    
+    function showMenu()
+    {
+        $name = $this->session->userdata('userName');
+        $role = $this->session->userdata('userRole');
+        $menu = [];
+        
+        if (empty($name))
+        {
+            $name = "Visitor";
+        }
+        
+        if ($role == "admin")
+        {
+            $menu = array(
+                        array('name' => "Alpha", 'link' => '/alpha'),
+                        array('name' => "Beta", 'link' => '/beta'),
+                        array('name' => "Gamma", 'link' => '/gamma'),
+                        array('name' => "Logout", 'link' => '/auth/logout'),
+                    );
+        }
+        else if ($role == "user")
+        {
+            $menu = array(
+                        array('name' => "Alpha", 'link' => '/alpha'),
+                        array('name' => "Beta", 'link' => '/beta'),
+                        array('name' => "Logout", 'link' => '/auth/logout'),
+                    );
+        }
+        else
+        {
+            $menu = array(
+                        array('name' => "Alpha", 'link' => '/alpha'),
+                        array('name' => "Login", 'link' => '/auth'),
+                    );
+        }
+        
+        return array('menudata' => $menu, 'name' => $name);
     }
 }
 
